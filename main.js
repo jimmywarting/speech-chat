@@ -101,7 +101,32 @@ if (speechSynthesis.getVoices().length === 0) {
   await new Promise((resolve) => speechSynthesis.onvoiceschanged = resolve)
 }
 
-const voices = [...speechSynthesis.getVoices()]
+const { languages } = navigator
+
+const normalizeLanguage = lang => lang.replace('_', '-').toLowerCase()
+
+const voices = speechSynthesis.getVoices().sort((a, b) => {
+  // Normalisera språkkoder för jämförelse
+  const normalizedLanguages = languages.map(normalizeLanguage)
+  const aLang = normalizeLanguage(a.lang)
+  const bLang = normalizeLanguage(b.lang)
+
+  // Prioritera röster baserat på ordningen i navigator.languages
+  const aIndex = normalizedLanguages.findIndex(lang => aLang.startsWith(lang))
+  const bIndex = normalizedLanguages.findIndex(lang => bLang.startsWith(lang))
+
+  // Om båda språken finns i navigator.languages, sortera baserat på deras index
+  if (aIndex !== -1 && bIndex !== -1) {
+    return aIndex - bIndex
+  }
+
+  // Om bara ett av språken finns i navigator.languages, prioritera det
+  if (aIndex !== -1) return -1
+  if (bIndex !== -1) return 1
+
+  // Om inget matchar navigator.languages, sortera alfabetiskt
+  return aLang.localeCompare(bLang)
+})
 
 // UI Elements
 const voiceSelect = document.getElementById('voiceSelect')
