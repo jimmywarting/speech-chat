@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta name="color-scheme" content="dark light"> -->
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css">
+</head>
+<body>
+
+  <div>
+    <h1>Speech-to-Text Chat</h1>
+    <div>
+      <label for="voiceSelect">Playback voice:</label>
+      <p>This is the voice you will hear when you get a message back
+      <br>⚠️ It's also the language that you have to speak in!</p>
+      <select id="voiceSelect"></select>
+    </div>
+    <div>
+      <label for="pitch">Pitch:</label>
+      <input id="pitch" type="range" min="0.5" max="2" step="0.1" value="1">
+    </div>
+    <div>
+      <label for="rate">Rate:</label>
+      <input id="rate" type="range" min="0.5" max="2" step="0.1" value="1">
+    </div>
+    <button id="startRecognition">Start Talking</button>
+    <textarea id="log" rows="10" readonly placeholder="Conversation log will appear here..."></textarea>
+  </div>
+
+  <div id="stats">
+    <h2>WebRTC Bandwidth Stats</h2>
+    <div id="audioStats"></div>
+    <div id="dataChannelStats"></div>
+  </div>
+
+  <script src="/main.js" type="module"></script>
+</body>
+</html>
