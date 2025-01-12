@@ -98,7 +98,7 @@ peer1.signalingPort = null
 let recognition
 
 if (speechSynthesis.getVoices().length === 0) {
-  await speechSynthesis.when('voiceschanged').first()
+  await new Promise((resolve) => speechSynthesis.onvoiceschanged = resolve)
 }
 
 const voices = [...speechSynthesis.getVoices()]
