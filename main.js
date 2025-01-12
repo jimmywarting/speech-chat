@@ -173,7 +173,7 @@ function setupRecognition() {
 
   recognition = new webkitSpeechRecognition()
   // Speech Recognition Setup
-  recognition.lang = voices[voiceSelect.value].lang
+  recognition.lang = voices[voiceSelect.value].lang.replace('_', '-').slice(0, 5)
   recognition.continuous = true
   recognition.interimResults = false
   recognition.onresult = (event) => {
