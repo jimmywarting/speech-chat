@@ -237,10 +237,10 @@ peer1.pc.ontrack = (event) => {
 }
 
 // Get local audio stream
-const localStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-setTimeout(() => {
-  localStream.getTracks().forEach(track => peer1.pc.addTrack(track, localStream))
-}, 1000)
+// const localStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+// setTimeout(() => {
+//   localStream.getTracks().forEach(track => peer1.pc.addTrack(track, localStream))
+// }, 1000)
 
 async function logBandwidthStats(peerConnection) {
   const stats = await peerConnection.getStats()
