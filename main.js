@@ -23,7 +23,7 @@ Map.groupBy ??= function groupBy (iterable, callbackfn) {
 
 const peer1 = new Peer({
   polite: location.href.includes('room'), // the peer that says you go ahead I will rollback on colision
-  trickle: !true // default
+  trickle: true // default
 })
 
 const dataChannel = peer1.pc.createDataChannel('textChannel', {
