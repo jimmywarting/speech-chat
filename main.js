@@ -159,11 +159,11 @@ function setupRecognition() {
   }
   recognition.onend = () => {
     console.log('Speech recognition ended')
-    recognition.start()
+    // recognition.start()
   }
 
   if (hadIt) {
-    recognition.start()
+    // recognition.start()
   }
 }
 
