@@ -113,7 +113,6 @@ const log = document.getElementById('log')
 // Populate voice options
 const populateVoices = () => {
   const copy = voices.map((voice, key) => ({voice, key}))
-  console.log(copy)
   const group = Object.groupBy(copy, (v) => v.voice.lang)
   for (const [lang, voices] of Object.entries(group)) {
     const optgroup = document.createElement('optgroup')
@@ -190,9 +189,8 @@ const sendText = (text, langSource) => {
 const handleReceivedText = async (data) => {
   log.value += `${(~~(performance.now() / 100)).toLocaleString() + 's'} Hen: ${data.text}\n`
 
-  console.log(data)
   console.log(voices[voiceSelect.value])
-  if (data.langSource === voices[voiceSelect.value].lang) {
+  if (data.langSource.replace('_', '-') === voices[voiceSelect.value].lang.replace('_', '-')) {
     speak(data.text)
   } else {
     const translatedText = await translateText(data.text, data.langSource)
