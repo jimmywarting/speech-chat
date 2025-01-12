@@ -95,7 +95,7 @@ channel.unsubscribe()
 peer1.signalingPort.onmessage = null
 peer1.signalingPort = null
 
-let recognition
+let recognition, lastStartedAt, autoRestartCount = 0
 
 if (speechSynthesis.getVoices().length === 0) {
   await new Promise((resolve) => speechSynthesis.onvoiceschanged = resolve)
@@ -162,6 +162,9 @@ voiceSelect.onchange = () => {
   speechSynthesis.speak(utterance)
 }
 
+let autoRestart = true
+let isListening = false
+
 function setupRecognition() {
   let hadIt = false
   if (recognition) {
@@ -172,6 +175,25 @@ function setupRecognition() {
   }
 
   recognition = new webkitSpeechRecognition()
+  recognition.onerror = function(event) {
+    switch (event.error) {
+    case 'network':
+      console.log('A network error occurred', event)
+      break;
+    case 'not-allowed':
+    case 'service-not-allowed':
+      // if permission to use the mic is denied, turn off auto-restart
+      autoRestart = false;
+      // determine if permission was denied by user or automatically.
+      if (new Date().getTime()-lastStartedAt < 200) {
+        invokeCallbacks(callbacks.errorPermissionBlocked, event);
+      } else {
+        invokeCallbacks(callbacks.errorPermissionDenied, event);
+      }
+      break;
+    }
+  };
+
   // Speech Recognition Setup
   recognition.lang = voices[voiceSelect.value].lang.replace('_', '-').slice(0, 5)
   recognition.continuous = true
@@ -183,8 +205,21 @@ function setupRecognition() {
     sendText(transcript, recognition.lang)
   }
   recognition.onend = () => {
-    console.log('Speech recognition ended')
-    // recognition.start()
+    if (autoRestart) {
+      // play nicely with the browser, and never restart annyang automatically more than once per second
+      var timeSinceLastStart = Date.now() - lastStartedAt
+      autoRestartCount += 1
+      if (autoRestartCount % 10 === 0) {
+        console.log('Speech Recognition is repeatedly stopping and starting. See http://is.gd/annyang_restarts for tips.');
+      }
+      if (timeSinceLastStart < 1000) {
+        setTimeout(function() {
+          start()
+        }, 1000 - timeSinceLastStart)
+      } else {
+        start()
+      }
+    }
   }
 
   if (hadIt) {
@@ -192,14 +227,22 @@ function setupRecognition() {
   }
 }
 
+function start() {
+  lastStartedAt = Date.now();
+  try {
+    recognition.start()
+    isListening = true
+  } catch(e) {
+    console.error(e.message);
+  }
+}
+
 startButton.onclick = () => {
   const utterance = new SpeechSynthesisUtterance('test')
   utterance.voice = speechSynthesis.getVoices()[0]
   speechSynthesis.speak(utterance)
-  recognition.start()
+  start()
 }
-
-
 
 dataChannel.onopen = () => console.log('DataChannel open')
 dataChannel.onmessage = (e) => handleReceivedText(JSON.parse(e.data))
