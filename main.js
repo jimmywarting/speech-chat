@@ -133,6 +133,9 @@ setupRecognition()
 
 voiceSelect.onchange = () => {
   setupRecognition()
+  const utterance = new SpeechSynthesisUtterance('test')
+  utterance.voice = speechSynthesis.getVoices()[0]
+  speechSynthesis.speak(utterance)
 }
 
 function setupRecognition() {
@@ -165,7 +168,12 @@ function setupRecognition() {
   }
 }
 
-startButton.onclick = () => recognition.start()
+startButton.onclick = () => {
+  const utterance = new SpeechSynthesisUtterance('test')
+  utterance.voice = speechSynthesis.getVoices()[0]
+  speechSynthesis.speak(utterance)
+  recognition.start()
+}
 
 
 
